@@ -8,6 +8,8 @@
     <title>.:Tamagotchi:.</title>
 
     <style>
+
+    /*corte 450px*/
     body {
         font-family: "Lucida Console", monospace;
         line-height: 1;
@@ -45,7 +47,7 @@
     }
 
     .container {
-        max-width: 1080px;
+        max-width: 940px;
         margin: 30px auto;
         display: flex;
         align-items: end;
@@ -57,27 +59,68 @@
         margin-right: 100px;
         display: flex;
         flex-direction: column;
+
+        @media only screen and (max-width: 450px) {
+            max-width: 150px;
+            margin-right: 10px;
+        }
     }
 
     #ladoA h2 {
         font-size: 1.9rem;
         display: table-caption;
         word-spacing: 7px;
+        @media only screen and (max-width: 450px) {
+            font-size: 1.4rem;
+        }
+    }
+
+    #tamagotchi {
+      @media only screen and (max-width: 450px) {
+       font-size: 15px;
+      }
     }
 
     #photoContainer {
+      opacity: 0;
+    }
+
+    #photo {
       position: absolute;
       opacity: 0;
       transition: opacity 1s ease-in-out;
       top: 0px;
-      right: 0;  
-    }
-    #photo {
-      border: 1px solid;
+      right: 0;
+      border: 3px solid;
       padding: 30px;
       transform: rotate(-2deg);
+      background: #FFF;
+
+      @media only screen and (max-width: 450px) {
+       left: 150px;
+      }
     }
 
+    #photoContainer button {
+      width: 120px;
+      position: absolute;
+      right: 0;
+      transform: rotate(2deg);
+      bottom: -70px;
+      background: #000;
+      color: #FFF;
+    }
+
+    #footer {
+      max-width: 940px;
+      margin: 0 auto;
+      font-size: 12px;
+      margin-top: 100px;
+
+        @media only screen and (max-width: 450px) {
+            margin-top: 160px;
+        }
+    }
     @font-face {
         font-family: "Conv_Gridular-Regular";
         src: url("fonts/Gridular-Regular.eot");
@@ -88,6 +131,7 @@
         font-style: normal;
     }
     </style>
+
 </head>
 
 <body>
@@ -107,12 +151,15 @@
                     <div v-html="chosenPies"></div>
                 </div>
             </div>
-
-            <div id="photoContainer" ref="photo">
+            <div id="photoContainer" ref="photoContainer">
               <img id="photo" ref="photo">
-              <button id="guardarPhoto" @click="guardarPhoto" ref="guardarPhoto">Guardar :)</button>
+              <button @click="guardarPhoto">Guardar : )</button>
             </div>
+        </div>
 
+        <div id="footer">
+            v.1.0 - Esta es la primerísima versión - Se randomizan 11 caritas, con 4 cuerpos y 4 pieses! <br>
+            Gracias por mirar - (◕‿◕)♡
         </div>
     </div>
     <script>
@@ -165,11 +212,14 @@
                 var chosenNumberPies = Math.floor(Math.random() * this.pies.length);
                 this.chosenPies = this.pies[chosenNumberPies];
                 this.$refs.makePhoto.style.opacity = 1;
+                this.$refs.photoContainer.style.opacity = 0;
                 this.$refs.photo.style.opacity = 0;
-                //this.$refs.photo.src = "";
+                setTimeout(() => this.$refs.photo.src = "", 500);
             },
             photome: function() {
-              this.$refs.photo.style.opacity = 1;
+              this.$refs.photoContainer.style.opacity = 1;
+              setTimeout(() => this.$refs.photo.style.opacity = 1, 200);
+
               const tamagotchi = this.$refs.tamagotchi;
                 html2canvas(tamagotchi, {
                     scale: 1.5,
@@ -180,8 +230,25 @@
                 })
             },
             guardarPhoto: function() {
-              console.log("guardar");
-            }
+              //console.log("src!", this.$refs.photo.src);
+              const url = this.$refs.photo.src;
+              const name = "mitamagotchi"
+              fetch(url)
+                .then(resp => resp.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = name;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(() => alert('An error sorry'));
+
+
+            },
         },
     }).mount("#app");
     </script>

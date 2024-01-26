@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
@@ -11,7 +11,8 @@
 
     /*corte 450px*/
     body {
-        font-family: "Lucida Console", monospace;
+        /* font-family: "Lucida Console", monospace; */
+        font-family: 'lucon', monospace;
         line-height: 1;
     }
 
@@ -130,6 +131,20 @@
         font-weight: normal;
         font-style: normal;
     }
+
+    @font-face {
+    font-family: 'lucon';
+    src:url('fonts/lucon.woff') format('woff'),
+        url('fonts/lucon.woff2') format('woff2'),
+        url('fonts/lucon.svg#lucon') format('svg'),
+        url('fonts/lucon.eot'),
+        url('fonts/lucon.eot?#iefix') format('embedded-opentype'),
+        url('fonts/lucon.ttf') format('truetype');
+
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
     </style>
 
 </head>
