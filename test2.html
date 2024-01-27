@@ -1,19 +1,276 @@
-<html lang="en-US">
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <div id="footer">
-        <a href="test2.html"> v.1.0</a> - Esta es la primerísima versión - Se randomizan 11 caritas, con 4
-        cuerpos y 4 pieses! <br />
-        Gracias por mirar - (◕‿◕)♡  (✦ ‿ ✦)
-    </div>
+    <title>.:Tamagotchi:.</title>
+
+
+    <style>
+        /*corte 450px*/
+        body {
+            /* font-family: "Lucida Console", monospace; 
+            font-family: "lucon", "Lucida Console", monospace;*/
+            line-height: 1;
+        }
+
+        p {
+            font-size: 0.8em;
+        }
+
+        h2 {
+            /*font-family: "Conv_Gridular-Regular", Sans-Serif;*/
+            font-weight: normal;
+        }
+
+        button {
+            margin-top: 20px;
+            background: transparent;
+            color: #222;
+            padding: 10px;
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.5s all;
+            width: 50%;
+            min-width: 100px;
+        }
+
+        button:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        #makePhoto {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .container {
+            max-width: 940px;
+            margin: 30px auto;
+            display: flex;
+            align-items: end;
+            position: relative;
+        }
+
+        #ladoA {
+            max-width: 200px;
+            margin-right: 100px;
+            display: flex;
+            flex-direction: column;
+
+            @media only screen and (max-width: 450px) {
+                max-width: 150px;
+                margin-right: 10px;
+            }
+        }
+
+        #ladoA h2 {
+            font-size: 1.9rem;
+            display: table-caption;
+            word-spacing: 7px;
+
+            @media only screen and (max-width: 450px) {
+                font-size: 1.4rem;
+            }
+        }
+
+        #tamagotchi {
+            @media only screen and (max-width: 450px) {
+                font-size: 15px;
+            }
+        }
+
+        #photoContainer {
+            opacity: 0;
+        }
+
+        #photo {
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            top: 0px;
+            right: 0;
+            border: 3px solid;
+            padding: 30px;
+            transform: rotate(-2deg);
+            background: #fff;
+
+            @media only screen and (max-width: 450px) {
+                left: 150px;
+            }
+        }
+
+        #photoContainer button {
+            width: 120px;
+            position: absolute;
+            right: 0;
+            transform: rotate(2deg);
+            bottom: -70px;
+            background: #000;
+            color: #fff;
+        }
+
+        #footer {
+            max-width: 940px;
+            margin: 0 auto;
+            font-size: 12px;
+            margin-top: 100px;
+            @media only screen and (max-width: 450px) {
+                margin-top: 160px;
+            }
+        }
+/* 
+        @font-face {
+            font-family: "Conv_Gridular-Regular";
+            src: url("fonts/Gridular-Regular.eot");
+            src: local("☺"), url("fonts/Gridular-Regular.woff") format("woff"),
+                url("fonts/Gridular-Regular.ttf") format("truetype"),
+                url("fonts/Gridular-Regular.svg") format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "lucon";
+            src: url("fonts/lucon.woff") format("woff"),
+                url("fonts/lucon.woff2") format("woff2"),
+                url("fonts/lucon.svg#lucon") format("svg"), url("fonts/lucon.eot"),
+                url("fonts/lucon.eot?#iefix") format("embedded-opentype"),
+                url("fonts/lucon.ttf") format("truetype");
+
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        } */
+    </style>
+</head>
 
 <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <div id="app">
+        <div class="container">
+            <div id="ladoA">
+                <h2 v-html="message"></h2>
+                <button @click="picker">Creame!</button>
+                <button id="makePhoto" @click="photome" ref="makePhoto">
+                    Photo!
+                </button>
+            </div>
+            <div id="ladoB">
+                <div id="tamagotchi" ref="tamagotchi">
+                    <div v-html="chosenRostro"></div>
+                    <div v-html="chosenCuerpo"></div>
+                    <div v-html="chosenPies"></div>
+                </div>
+            </div>
+            <div id="photoContainer" ref="photoContainer">
+                <img id="photo" ref="photo" />
+                <button @click="guardarPhoto">Guardar : )</button>
+            </div>
+        </div>
 
+        <div id="footer">
+            <a href="test2.html"> v.1.0</a> - Esta es la primerísima versión - Se randomizan 11 caritas, con 4
+            cuerpos y 4 pieses! <br />
+            Gracias por mirar - (◕‿◕)♡  (✦ ‿ ✦)
+        </div>
+    </div>
 
+    <script>
+        const { createApp } = Vue;
 
+        createApp({
+            data() {
+                return {
+                    message: "Quiero <br>ser tu Tamagotchi",
+                    chosenRostro: "",
+                    chosenCuerpo: "",
+                    chosenPies: "",
+                    rostro: [
+                        "&nbsp&nbsp&nbspミミミ<br>&nbsp&nbsp/&nbsp&nbsp&nbsp&nbsp.</br>&nbsp(&nbsp▪‿▪&nbsp&nbsp)<br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/",
+                        "&nbsp&nbsp&nbsp&nbsp‿‿‿.</br>&nbsp&nbsp/&nbsp&nbsp&nbsp.‿</br>&nbsp/◡__◡ ʔ</br>&nbsp&#92;____ /",
+                        "&nbsp&nbsp____&nbsp</br>&nbsp(  . . )</br>&nbsp|&nbsp___&nbsp|</br>&nbsp|_____|",
+                        "&nbsp&nbsp&nbsp.>>>.</br>&nbsp//&nbsp&nbsp&nbsp>>&#92;</br>/( ⊙__⊙}&#92;</br>//&#92;&nbsp&nbsp&nbsp_/&#92;&#92;&#92;",
+                        "&nbsp&nbsp&nbsp.....</br>&nbsp&nbsp;;&nbsp;  ;;.</br>&nbsp( ơ__ơ ) </br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/",
+                        "&nbsp&nbsp&nbsp﹏﹏﹏﹏﹏﹏.</br>&nbsp&nbsp/&nbsp&nbsp&nbsp&nbsp&nbsp﹏﹏﹏﹏﹏﹏﹏﹏﹏..</br>&nbsp(&nbsp◕‿◕&nbsp)﹏﹏﹏.</br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/﹏﹏﹏..</br>", //feliz
+                        "&nbsp&nbsp&nbsp.©©©.</br>&nbsp&nbsp/&nbsp&nbsp&nbsp&nbsp:</br>&nbsp(&nbsp˘̩╭╮˘̩&nbsp)</br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/ .</br>", //triste - 7
+                        "&nbsp&nbsp&nbsp....</br>&nbsp&nbsp/&nbsp&nbsp&nbsp&nbsp:</br>&nbsp(&nbsp▀̿Ĺ̯▀̿ ̿&nbsp)</br>&nbsp&nbsp|&nbsp&nbsp&nbsp&nbsp| .</br>", // serio - 8
+                        "&nbsp&nbsp&nbsp§§§§.</br>&nbsp§§&nbsp&nbsp&nbsp&nbsp&#92;</br>§§&nbsp⌒◡⌒|</br>§§§&nbsp&nbsp&nbsp&nbsp/</br>", //feliz - 9
+                        "&nbsp&nbsp&nbsp;»»»»,</br>&nbsp;&nbsp;«&nbsp;.&nbsp;   .</br>&nbsp(&nbsp;&nbsp;⸝⸝⸝⸝3⸝⸝⸝)  </br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/ <br>", //chuik - 10
+                        "&nbsp&nbsp&nbsp;»»»»,</br>&nbsp;&nbsp;«&nbsp;.&nbsp;   .</br>&nbsp(&nbsp;&nbsp;⸝⸝⸝⸝3⸝⸝⸝)  </br>&nbsp&nbsp&#92;&nbsp&nbsp&nbsp&nbsp/ <br>", //chuik - 10
 
+                        "&nbsp&nbsp.≡≡≡≡,</br>.≡≡&nbsp;.&nbsp;.&nbsp;≡</br>≡(&nbsp;&nbsp;｡__ )≡</br>≡≡&#92;&nbsp&nbsp&nbsp&nbsp/≡≡≡<br>", //11
+                    ],
+                    cuerpo: [
+                        "⊂w▒▒▒▒▒wwつ<br>&nbsp&nbsp&nbsp▒▒▒&nbsp&nbsp",
+                        "⊂=▒▒░▒▒==つ♡<br>&nbsp&nbsp&nbsp▒░▒&nbsp&nbsp",
+                        "&nbsp&nbsp|░¦░|</br>&nbsp&nbsp|░░░|<br>&nbsp&nbspU░░░U ",
+                        "&nbsp⊂░▒▓▒░つ<br>&nbsp&nbsp&nbsp▒▓▒&nbsp&nbsp",
+                    ],
+                    pies: [
+                        "&nbsp&nbsp&nbsp░ ░<br>&nbsp&nbsp&nbsp▓ ▓</br>&nbsp&nbsp▟  ▟ ",
+                        "&nbsp&nbsp ▓ ▓</br>&nbsp&nbsp&nbsp⩽ ⩽ ",
+                        "&nbsp&nbsp&nbsp: :<br>&nbsp&nbsp&nbsp: :</br>&nbsp&nbsp▅  &nbsp▅",
+                        "&nbsp&nbsp//&nbsp&#92;&#92;<br>&nbsp&nbsp=====</br>&nbsp///&nbsp&#92;&#92;&#92;</br>&nbsp-------<br>&nbspᴖ̮̮ᴖᴖ̮̮ᴖᴖ̮̮ᴖᴖ̮̮ᴖ",
+                    ],
+                };
+            },
+            methods: {
+                picker: function () {
+                    var chosenNumber = Math.floor(Math.random() * this.rostro.length);
+                    this.chosenRostro = this.rostro[chosenNumber];
+
+                    var chosenNumberCuerpo = Math.floor(
+                        Math.random() * this.cuerpo.length
+                    );
+                    this.chosenCuerpo = this.cuerpo[chosenNumberCuerpo];
+
+                    var chosenNumberPies = Math.floor(Math.random() * this.pies.length);
+                    this.chosenPies = this.pies[chosenNumberPies];
+                    this.$refs.makePhoto.style.opacity = 1;
+                    this.$refs.photoContainer.style.opacity = 0;
+                    this.$refs.photo.style.opacity = 0;
+                    setTimeout(() => (this.$refs.photo.src = ""), 500);
+                },
+                photome: function () {
+                    this.$refs.photoContainer.style.opacity = 1;
+                    setTimeout(() => (this.$refs.photo.style.opacity = 1), 200);
+
+                    const tamagotchi = this.$refs.tamagotchi;
+                    html2canvas(tamagotchi, {
+                        scale: 1.5,
+                        useCORS: true,
+                    }).then((canvas) => {
+                        var ImageUrlb64 = canvas.toDataURL("image/png");
+                        this.$refs.photo.src = ImageUrlb64;
+                    });
+                },
+                guardarPhoto: function () {
+                    //console.log("src!", this.$refs.photo.src);
+                    const url = this.$refs.photo.src;
+                    const name = "mitamagotchi";
+                    fetch(url)
+                        .then((resp) => resp.blob())
+                        .then((blob) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.style.display = "none";
+                            a.href = url;
+                            a.download = name;
+                            document.body.appendChild(a);
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                        })
+                        .catch(() => alert("An error sorry"));
+                },
+            },
+        }).mount("#app");
+    </script>
 </body>
 
 </html>
